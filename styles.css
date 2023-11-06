@@ -1,0 +1,15 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.music-list {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.audio-item {
+    margin-bottom: 10px;
+    align-self: flex-start;
+}
+
