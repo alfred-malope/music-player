@@ -5,12 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Player</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/47c7f38079.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="music-list">
-        <!-- Populate this with a list of music files from Azure Storage -->
+    <div class="container">
+        <div class="music-player">
+            <nav>
+                <div class="circle">
+                    <i class="fa fa-angle-left"></i>
+                </div>
+                <div class="title">
+                    <h2>Music Player</h2>
+                </div>
+                <div class="circle">
+                    <i class="fa fa-bars"></i>
+                </div>
+            </nav>
+            <div class="music-list"></div>
+            <div class="image">
+                <img src="vinyl.gif" class="song-img">
+            </div>
+            
+            <p id="current-song"></p>
+            <audio id="audio-player" ></audio>
+            <input type="range" value="0" id="progress" class="progress">
+
+            <div class="controls">
+                <div onclick="goBackward()"><i class="fa fa-backward"></i></div>
+                <div onclick="playPause()"><i class="fa fa-play" id="controlIcon"></i></div>
+                <div onclick="goForward()"><i class="fa fa-forward"></i></div>               
+            </div>
+        </div>
     </div>
-    <audio id="audio-player" controls></audio>
+    <!-- <div class="music-list"></div> -->
+    <!-- <audio id="audio-player" controls></audio> -->
+    <!-- <audio id="audio-player" ></audio> -->
+
+    
+    
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,6 +1,24 @@
+let progress = document.getElementById('progress');
+let song = document.getElementById('audio-player');
+let controlIcon = document.getElementById('controlIcon');
+
 document.addEventListener('DOMContentLoaded', function() {
     const audioPlayer = document.getElementById('audio-player');
     const musicList = document.querySelector('.music-list');
+    const currentSongElement = document.getElementById('current-song'); // Added this line
+    const barsIcon = document.querySelector('.fa-bars');
+    const backIcon = document.querySelector('.fa-angle-left');
+    const imageElement = document.querySelector('.image');
+    const musicListElement = document.querySelector('.music-list');
+
+    barsIcon.addEventListener('click', function() {
+        imageElement.style.display = 'none';
+        musicListElement.style.display = 'block';
+    });
+    backIcon.addEventListener('click', function() {
+        musicListElement.style.display = 'none';
+        imageElement.style.display = 'block';
+    });
 
     const containerName = 'my-music';
     const apiUrl = `https://webmusicplayer.blob.core.windows.net/${containerName}?restype=container&comp=list&Ew95xwNKo7EsImqev%2F8wEfDUl34NdSszEWv%2BVsByv%2FQ%3D`;
@@ -29,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 audioLink.textContent = blobName;
                 audioLink.addEventListener('click', function(event) {
                     event.preventDefault();
-                    playAudio(url);
+                    playAudio(url, blobName);
                 });
 
                 audioItem.appendChild(audioLink);
@@ -37,22 +55,64 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Autoplay the first audio
-            playAudio(audioList[currentAudioIndex]);
+            playAudio(audioList[currentAudioIndex], blobs[0].getElementsByTagName('Name')[0].textContent); // Updated this line
         })
         .catch(error => {
             console.error('Error fetching music list:', error);
         });
 
-    function playAudio(url) {
+    function playAudio(url, songName) {
         audioPlayer.src = url;
         audioPlayer.play();
+        
+
+        // Update current song name
+        currentSongElement.textContent = songName;
 
         // Set up event listener for when audio ends
         audioPlayer.addEventListener('ended', function() {
             currentAudioIndex++;
             if (currentAudioIndex < audioList.length) {
-                playAudio(audioList[currentAudioIndex]);
+                playAudio(audioList[currentAudioIndex], blobs[currentAudioIndex].getElementsByTagName('Name')[0].textContent); // Updated this line
             }
+            
         });
+        
     }
+    
 });
+
+
+
+song.onloadedmetadata = function () {
+    progress.max = song.duration;
+    progress.value = song.currentTime;
+}
+function playPause(){
+    if(controlIcon.classList.contains("fa-pause")){
+        song.pause();
+        controlIcon.classList.remove("fa-pause");
+        controlIcon.classList.add("fa-play");
+    }
+    else{
+        song.play();
+        controlIcon.classList.remove("fa-play");
+        controlIcon.classList.add("fa-pause");
+    }
+}
+
+if(song.play()){
+    setInterval(()=>{
+        progress.value = song.currentTime;
+    },500)
+    controlIcon.classList.remove("fa-play");
+    controlIcon.classList.add("fa-pause");
+}
+
+progress.onchange = function(){
+    song.play();
+    song.currentTime = progress.value;
+    controlIcon.classList.remove("fa-play");
+    controlIcon.classList.add("fa-pause");
+}
+
