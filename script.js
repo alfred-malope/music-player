@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const backIcon = document.querySelector('.fa-angle-left');
     const imageElement = document.querySelector('.image');
     const musicListElement = document.querySelector('.music-list');
+    const goBackward = document.getElementById('goBackward');
+    const goForward = document.getElementById('goForward');
+
+
+    
 
     barsIcon.addEventListener('click', function() {
         imageElement.style.display = 'none';
@@ -25,13 +30,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let currentAudioIndex = 0;
     let audioList = [];
+    let blobs;
+    
+
 
     fetch(apiUrl)
         .then(response => response.text())
         .then(data => {
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(data, 'application/xml');
-            const blobs = xmlDoc.getElementsByTagName('Blob');
+            blobs = xmlDoc.getElementsByTagName('Blob');
 
             for (let i = 0; i < blobs.length; i++) {
                 const blobName = blobs[i].getElementsByTagName('Name')[0].textContent;
@@ -61,24 +69,44 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error fetching music list:', error);
         });
 
-    function playAudio(url, songName) {
-        audioPlayer.src = url;
-        audioPlayer.play();
-        
-
-        // Update current song name
-        currentSongElement.textContent = songName;
-
-        // Set up event listener for when audio ends
-        audioPlayer.addEventListener('ended', function() {
-            currentAudioIndex++;
+        goBackward.addEventListener('click', function() {
+            currentAudioIndex--;
             if (currentAudioIndex < audioList.length) {
                 playAudio(audioList[currentAudioIndex], blobs[currentAudioIndex].getElementsByTagName('Name')[0].textContent); // Updated this line
             }
-            
+        }); 
+        goForward.addEventListener('click', function() {
+            currentAudioIndex++;
+            if (currentAudioIndex < audioList.length) {
+                playAudio(audioList[currentAudioIndex], blobs[currentAudioIndex].getElementsByTagName('Name')[0].textContent);
+            }
         });
+           
+
+        function playAudio(url, songName) {
+            audioPlayer.src = url;
+            currentSongElement.textContent = songName;
         
-    }
+            // Add a check to see if the audio context is unlocked
+            if (audioPlayer.readyState >= 2) {
+                audioPlayer.play();
+            } else {
+                document.addEventListener('click', function handleClick() {
+                    audioPlayer.play();
+                    document.removeEventListener('click', handleClick);
+                }, { once: true });
+            }
+        
+            // Set up event listener for when audio ends
+            audioPlayer.addEventListener('ended', function() {
+                currentAudioIndex++;
+                if (currentAudioIndex < audioList.length) {
+                    playAudio(audioList[currentAudioIndex], blobs[currentAudioIndex].getElementsByTagName('Name')[0].textContent);
+                }
+            });
+        }
+        
+    
     
 });
 
@@ -115,4 +143,3 @@ progress.onchange = function(){
     controlIcon.classList.remove("fa-play");
     controlIcon.classList.add("fa-pause");
 }
-
