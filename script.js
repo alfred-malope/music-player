@@ -133,8 +133,8 @@ if(song.play()){
     setInterval(()=>{
         progress.value = song.currentTime;
     },500)
-    controlIcon.classList.remove("fa-play");
-    controlIcon.classList.add("fa-pause");
+    // controlIcon.classList.remove("fa-play");
+    // controlIcon.classList.add("fa-pause");
 }
 
 progress.onchange = function(){
